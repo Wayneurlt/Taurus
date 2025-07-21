@@ -71,7 +71,7 @@
       <main class="py-6">
         <div class="px-4 sm:px-6 lg:px-8">
           <!-- Dashboard Overview -->
-          <div v-if="$route.path === '/admin'" class="space-y-6">
+          <div class="space-y-6">
             <h1 class="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
 
             <!-- Stats -->
@@ -345,14 +345,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-// import {
-//   ArrowPathIcon,
-//   ChartBarIcon,
-//   CheckCircleIcon,
-//   PlusIcon,
-//   UserPlusIcon,
-//   XCircleIcon,
-// } from "@heroicons/vue/24/outline";
 
 // Current admin data
 const currentAdmin = ref({
