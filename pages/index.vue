@@ -11,7 +11,11 @@
       <div class="block sm:hidden">
         <!-- Top Row: Logo and Theme Toggle -->
         <div class="flex items-center justify-between mb-3">
-          <img src="assets/images/logo.png" alt="Logo" class="h-8 w-auto" />
+          <img 
+            :src="theme === 'light' ? '/images/b-logo.png' : '/images/logo.png'" 
+            alt="Logo" 
+            class="h-8 w-auto" 
+          />
           <button
             class="hover:text-green-500 transition-colors duration-200"
             @click="toggleTheme"
@@ -81,7 +85,11 @@
       <!-- Desktop Layout -->
       <div class="hidden sm:flex items-center justify-between">
       <div class="flex items-center space-x-4">
-        <img src="assets/images/logo.png" alt="Logo" class="h-12 w-auto" />
+        <img 
+          :src="theme === 'light' ? '/images/b-logo.png' : '/images/logo.png'" 
+          alt="Logo" 
+          class="h-12 w-auto" 
+        />
       </div>
 
       <div class="flex-1 max-w-md mx-4">

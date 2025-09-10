@@ -51,7 +51,7 @@
     <div class="flex h-16 items-center border-b border-gray-200 px-4">
       <img
         class="ml-3 h-12 w-auto"
-        src="~/assets/images/b-logo.png"
+        src="/images/b-logo.png"
         alt="Admin Logo"
       />
     </div>
