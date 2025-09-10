@@ -11,6 +11,9 @@ export default defineNuxtConfig({
   ],
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+  devServer: {
+    port: 3001
+  },
   css: [
     "~/assets/css/main.css",
     "notivue/notification.css",
@@ -36,6 +39,7 @@ export default defineNuxtConfig({
       },
     },
     environment: process.env.ENVIROMENT,
+    databaseUrl: process.env.DATABASE_URL || "postgresql://neondb_owner:npg_3ypcmZI4YFqH@ep-wandering-fog-agwlmjw7-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
   },
   app: {
     head: {

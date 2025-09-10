@@ -184,7 +184,23 @@
       <!-- Trending Now -->
       <section class="mb-8" v-if="!searchQuery">
         <h2 class="text-2xl font-bold mb-4">Trending Now</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <!-- Loading State -->
+        <div v-if="loading" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+          <p class="mt-2 text-gray-500 dark:text-gray-400">Loading songs...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div v-else-if="error" class="text-center py-8">
+          <p class="text-red-500 mb-4">{{ error }}</p>
+          <button @click="fetchSongs" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+            Try Again
+          </button>
+        </div>
+        
+        <!-- Songs Grid -->
+        <div v-else-if="trendingSongs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="song in trendingSongs"
             :key="song.id"
@@ -193,7 +209,7 @@
           >
             <img
               :src="
-                song.image ||
+                song.cover ||
                 'https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg'
               "
               class="w-16 h-16 object-cover rounded"
@@ -202,7 +218,7 @@
             <div class="flex-1 min-w-0">
               <h3 class="font-medium truncate">{{ song.title }}</h3>
               <p class="text-gray-500 dark:text-gray-400 text-sm truncate">
-                {{ song.artist?.name || song.artist || "Unknown Artist" }}
+                {{ song.artist?.name || "Unknown Artist" }}
               </p>
             </div>
             <button
@@ -226,6 +242,11 @@
               </svg>
             </button>
           </div>
+        </div>
+        
+        <!-- No Songs Message -->
+        <div v-else class="text-center py-8">
+          <p class="text-gray-500 dark:text-gray-400">No songs available at the moment.</p>
         </div>
       </section>
       <!-- Popular Artists -->
@@ -279,7 +300,7 @@
             <div class="flex-1 min-w-0">
               <h3 class="font-medium truncate">{{ song.title }}</h3>
               <p class="text-gray-500 dark:text-gray-400 text-sm truncate">
-                {{ song.artist?.name || song.artist || "Unknown Artist" }}
+                {{ song.artist?.name || "Unknown Artist" }}
               </p>
             </div>
             <span class="text-gray-500 dark:text-gray-400 text-sm">{{
@@ -865,8 +886,12 @@ const fetchSongs = async () => {
   try {
     loading.value = true;
     error.value = null;
+    console.log('Fetching songs from API...');
     const response = await $fetch('/api/songs?status=published&limit=20');
+    console.log('API Response:', response);
     trendingSongs.value = response.songs || [];
+    console.log('Songs loaded:', trendingSongs.value.length);
+    console.log('First few songs:', trendingSongs.value.slice(0, 3).map(s => ({ title: s.title, artist: s.artist?.name, audioUrl: s.audioUrl })));
   } catch (err) {
     console.error('Error fetching songs:', err);
     error.value = 'Failed to fetch songs. Please try again later.';
@@ -912,7 +937,7 @@ const filteredSongs = computed(() => {
   return allSongs.value.filter(
     (song) =>
       song.title.toLowerCase().includes(query) ||
-      (song.artist?.name || song.artist || "").toLowerCase().includes(query)
+      (song.artist?.name || "").toLowerCase().includes(query)
   );
 });
 
@@ -927,14 +952,24 @@ const filteredArtists = computed(() => {
 
 // --- METHODS ---
 const playSong = (song) => {
+  console.log('Playing song:', song);
+  console.log('Audio URL:', song.audioUrl);
+  
   if (currentSong.value?.id === song.id) {
     togglePlay();
   } else {
     currentSong.value = song;
     if (audioElement.value) {
       audioElement.value.src = song.audioUrl;
-      audioElement.value.play();
-      isPlaying.value = true;
+      audioElement.value.play().then(() => {
+        console.log('Audio started playing successfully');
+        isPlaying.value = true;
+      }).catch((error) => {
+        console.error('Error playing audio:', error);
+        isPlaying.value = false;
+      });
+    } else {
+      console.error('Audio element not initialized');
     }
   }
 };

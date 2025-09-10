@@ -4,9 +4,10 @@ declare global {
   var __prisma: PrismaClient | undefined
 }
 
-const databaseUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_3ypcmZI4YFqH@ep-wandering-fog-agwlmjw7-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-
 function createPrismaClient() {
+  const config = useRuntimeConfig()
+  const databaseUrl = config.databaseUrl || process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_3ypcmZI4YFqH@ep-wandering-fog-agwlmjw7-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+  
   return new PrismaClient({
     datasources: {
       db: {
