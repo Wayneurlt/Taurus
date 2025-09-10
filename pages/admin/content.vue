@@ -573,6 +573,19 @@
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                         />
                       </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                          >Status</label
+                        >
+                        <select
+                          v-model="newSong.status"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                        >
+                          <option value="draft">Draft</option>
+                          <option value="published">Published</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">Published songs will appear on the client side</p>
+                      </div>
                       </div>
                       
                       <!-- Full-width fields -->
@@ -882,6 +895,7 @@ const resetForms = () => {
     duration: 180,
     cover: null,
     audioUrl: null,
+    status: "published", // Default to published
   };
   newAlbum.value = { title: "", artist: "", genre: "", cover: null };
   newPlaylist.value = { title: "", description: "" };
@@ -1080,6 +1094,7 @@ const editItem = (item) => {
       duration: item.duration || 180,
       cover: item.cover || null,
       audioUrl: item.audioUrl || null,
+      status: item.status || "published",
     };
   } else if ("releaseDate" in item) {
     uploadType.value = "album";
