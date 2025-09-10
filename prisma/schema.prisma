@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,7 +11,7 @@ model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   name       String?
-  role       String   @default("user") // user, admin, super_admin
+  role       String   @default("user")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   posts      Post[]
@@ -26,8 +23,8 @@ model Post {
   title     String
   content   String?
   published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
   authorId  Int
+  author    User    @relation(fields: [authorId], references: [id])
 }
 
 model Artist {
@@ -37,40 +34,40 @@ model Artist {
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  songs     Song[]
   albums    Album[]
+  songs     Song[]
 }
 
 model Album {
   id          Int       @id @default(autoincrement())
   title       String
-  artist      Artist    @relation(fields: [artistId], references: [id])
   artistId    Int
   genre       String?
   releaseDate DateTime?
   cover       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  artist      Artist    @relation(fields: [artistId], references: [id])
   songs       Song[]
 }
 
 model Song {
   id            Int            @id @default(autoincrement())
   title         String
-  artist        Artist         @relation(fields: [artistId], references: [id])
   artistId      Int
-  album         Album?         @relation(fields: [albumId], references: [id])
   albumId       Int?
   genre         String?
-  duration      Int // in seconds
+  duration      Int
   audioUrl      String
   cover         String?
-  status        String         @default("draft") // draft, published, archived
+  status        String         @default("draft")
   playCount     Int            @default(0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  likedBy       User[]         @relation("UserLikedSongs")
   playlistSongs PlaylistSong[]
+  album         Album?         @relation(fields: [albumId], references: [id])
+  artist        Artist         @relation(fields: [artistId], references: [id])
+  likedBy       User[]         @relation("UserLikedSongs")
 }
 
 model Playlist {
@@ -87,12 +84,12 @@ model Playlist {
 
 model PlaylistSong {
   id         Int      @id @default(autoincrement())
-  playlist   Playlist @relation(fields: [playlistId], references: [id])
   playlistId Int
-  song       Song     @relation(fields: [songId], references: [id])
   songId     Int
   order      Int      @default(0)
   createdAt  DateTime @default(now())
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  song       Song     @relation(fields: [songId], references: [id])
 
   @@unique([playlistId, songId])
 }
