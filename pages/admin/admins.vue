@@ -367,14 +367,6 @@
         <div
           class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
         >
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            class="hidden sm:inline-block sm:h-screen sm:align-middle"
-            aria-hidden="true"
-            >​</span
-          >
           <div
             class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
           >
@@ -488,14 +480,6 @@
         <div
           class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
         >
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            class="hidden sm:inline-block sm:h-screen sm:align-middle"
-            aria-hidden="true"
-            >​</span
-          >
           <div
             class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
           >
@@ -625,14 +609,6 @@
         <div
           class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
         >
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            class="hidden sm:inline-block sm:h-screen sm:align-middle"
-            aria-hidden="true"
-            >​</span
-          >
           <div
             class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
           >

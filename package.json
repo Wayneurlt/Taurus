@@ -12,6 +12,7 @@
     "prisma:migrate": "npx prisma migrate",
     "prisma:studio": "npx prisma studio",
     "prisma:schema": "npx prisma db push",
+    "prisma:seed": "npx tsx prisma/seed.ts",
     "prisma": "npm run prisma:generate && npm run prisma:migrate && npm run prisma:schema"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@types/morgan": "^1.9.9"
+    "@types/morgan": "^1.9.9",
+    "tsx": "^4.20.5"
   }
 }

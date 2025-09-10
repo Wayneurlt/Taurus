@@ -124,9 +124,37 @@
             </nav>
           </div>
 
+          <!-- Error Message -->
+          <div v-if="error" class="mb-4 rounded-md bg-red-50 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Error</h3>
+                <div class="mt-2 text-sm text-red-700">
+                  {{ error }}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Content Table -->
           <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-            <div v-if="activeTab === 'songs'">
+            <!-- Loading State -->
+            <div v-if="loading" class="flex items-center justify-center py-12">
+              <div class="flex items-center space-x-2">
+                <svg class="animate-spin h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-gray-500">Loading...</span>
+              </div>
+            </div>
+
+            <div v-else-if="activeTab === 'songs'">
               <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
@@ -191,12 +219,12 @@
                       </td>
                       <td class="whitespace-nowrap px-6 py-4">
                         <div class="text-sm text-gray-900">
-                          {{ song.artist }}
+                          {{ song.artist?.name || "Unknown Artist" }}
                         </div>
                       </td>
                       <td class="whitespace-nowrap px-6 py-4">
                         <div class="text-sm text-gray-900">
-                          {{ song.album || "Single" }}
+                          {{ song.album?.title || "Single" }}
                         </div>
                       </td>
                       <td
@@ -466,31 +494,30 @@
       <!-- Upload/Edit Modal -->
       <div v-if="showUploadModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div
-          class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+          class="flex min-h-screen items-center justify-center px-4 py-4 text-center sm:block sm:p-0"
         >
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            class="hidden sm:inline-block sm:h-screen sm:align-middle"
-            aria-hidden="true"
-            >​</span
-          >
           <div
-            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle"
           >
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div class="sm:flex sm:items-start">
-                <div
-                  class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left"
-                >
+            <div class="bg-white px-6 pt-6 pb-4 sm:p-8 sm:pb-6">
+              <div class="w-full">
+                <div class="flex items-center justify-between mb-6">
                   <h3
-                    class="text-lg font-medium leading-6 text-gray-900"
+                    class="text-xl font-semibold leading-6 text-gray-900"
                     id="modal-title"
                   >
                     {{ modalTitle }}
                   </h3>
-                  <div class="mt-4 space-y-4">
+                  <button
+                    @click="showUploadModal = false"
+                    class="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="space-y-6 max-h-96 overflow-y-auto">
                     <!-- Song Form -->
                     <div v-if="uploadType === 'song'" class="space-y-4">
                       <div>
@@ -505,10 +532,20 @@
                       </div>
                       <div>
                         <label class="block text-sm font-medium text-gray-700"
+                          >Artist</label
+                        >
+                        <input
+                          v-model="formArtist"
+                          type="text"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700"
                           >Album</label
                         >
                         <input
-                          v-model="newSong.album"
+                          v-model="newSong.albumName"
                           type="text"
                           placeholder="Single"
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
@@ -522,6 +559,39 @@
                           v-model="newSong.genre"
                           type="text"
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                          >Duration (seconds)</label
+                        >
+                        <input
+                          v-model="newSong.duration"
+                          type="number"
+                          min="1"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                          >Audio File</label
+                        >
+                        <input
+                          type="file"
+                          accept="audio/*"
+                          @change="handleAudioUpload"
+                          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                          >Cover Image</label
+                        >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          @change="handleCoverUpload"
+                          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                         />
                       </div>
                     </div>
@@ -636,14 +706,6 @@
         <div
           class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
         >
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            class="hidden sm:inline-block sm:h-screen sm:align-middle"
-            aria-hidden="true"
-            >​</span
-          >
           <div
             class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
           >
@@ -707,95 +769,18 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 // Content data
-const songs = ref([
-  {
-    id: 1,
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    album: "After Hours",
-    genre: "Pop",
-    duration: 203,
-    cover:
-      "https://images.unsplash.com/photo-1593693397641-714041a9957d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-    status: "published",
-    audioUrl: "https://example.com/audio1.mp3",
-  },
-  {
-    id: 2,
-    title: "Save Your Tears",
-    artist: "The Weeknd",
-    album: "After Hours",
-    genre: "Pop",
-    duration: 215,
-    cover:
-      "https://images.unsplash.com/photo-1593693397641-714041a9957d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-    status: "published",
-    audioUrl: "https://example.com/audio2.mp3",
-  },
-  {
-    id: 3,
-    title: "Levitating",
-    artist: "Dua Lipa",
-    album: "Future Nostalgia",
-    genre: "Pop",
-    duration: 223,
-    cover:
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-    status: "draft",
-    audioUrl: "https://example.com/audio3.mp3",
-  },
-]);
+const songs = ref([]);
+const loading = ref(false);
+const error = ref(null);
 
-const albums = ref([
-  {
-    id: 1,
-    title: "After Hours",
-    artist: "The Weeknd",
-    genre: "Pop",
-    songCount: 14,
-    releaseDate: "2020-03-20",
-    cover:
-      "https://images.unsplash.com/photo-1593693397641-714041a9957d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    id: 2,
-    title: "Future Nostalgia",
-    artist: "Dua Lipa",
-    genre: "Pop",
-    songCount: 11,
-    releaseDate: "2020-03-27",
-    cover:
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-  },
-]);
-
-const playlists = ref([
-  {
-    id: 1,
-    title: "Today's Top Hits",
-    description: "The most popular songs right now",
-    songCount: 50,
-    cover:
-      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Chill Vibes",
-    description: "Relaxing music for your downtime",
-    songCount: 30,
-    cover:
-      "https://images.unsplash.com/photo-1516223725333-d39e34648725?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-    featured: false,
-  },
-]);
+const albums = ref([]);
+const playlists = ref([]);
 
 // UI State
 const activeTab = ref("songs");
@@ -811,13 +796,92 @@ const newSong = ref({});
 const newAlbum = ref({});
 const newPlaylist = ref({});
 
+// API Functions
+const fetchSongs = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    const { data } = await $fetch('/api/songs');
+    songs.value = data.songs || [];
+  } catch (err) {
+    console.error('Error fetching songs:', err);
+    error.value = 'Failed to fetch songs';
+    // Fallback to mock data if API fails
+    songs.value = [
+      {
+        id: 1,
+        title: "Blinding Lights",
+        artist: { name: "The Weeknd" },
+        album: { title: "After Hours" },
+        genre: "Pop",
+        duration: 203,
+        cover: "https://images.unsplash.com/photo-1593693397641-714041a9957d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+        status: "published",
+        audioUrl: "https://example.com/audio1.mp3",
+      },
+      {
+        id: 2,
+        title: "Save Your Tears",
+        artist: { name: "The Weeknd" },
+        album: { title: "After Hours" },
+        genre: "Pop",
+        duration: 215,
+        cover: "https://images.unsplash.com/photo-1593693397641-714041a9957d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+        status: "published",
+        audioUrl: "https://example.com/audio2.mp3",
+      },
+    ];
+  } finally {
+    loading.value = false;
+  }
+};
+
+const createSong = async (songData) => {
+  try {
+    const response = await $fetch('/api/songs', {
+      method: 'POST',
+      body: songData
+    });
+    return response;
+  } catch (err) {
+    console.error('Error creating song:', err);
+    throw err;
+  }
+};
+
+const updateSong = async (id, songData) => {
+  try {
+    const response = await $fetch(`/api/songs/${id}`, {
+      method: 'PUT',
+      body: songData
+    });
+    return response;
+  } catch (err) {
+    console.error('Error updating song:', err);
+    throw err;
+  }
+};
+
+const deleteSong = async (id) => {
+  try {
+    const response = await $fetch(`/api/songs/${id}`, {
+      method: 'DELETE'
+    });
+    return response;
+  } catch (err) {
+    console.error('Error deleting song:', err);
+    throw err;
+  }
+};
+
 // Methods
 const resetForms = () => {
   newSong.value = {
     title: "",
-    artist: "",
-    album: "",
+    artistName: "",
+    albumName: "",
     genre: "",
+    duration: 180,
     cover: null,
     audioUrl: null,
   };
@@ -839,8 +903,8 @@ const filteredSongs = computed(() => {
   return songs.value.filter(
     (song) =>
       song.title.toLowerCase().includes(query) ||
-      song.artist.toLowerCase().includes(query) ||
-      (song.album && song.album.toLowerCase().includes(query))
+      song.artist?.name?.toLowerCase().includes(query) ||
+      (song.album && song.album.title?.toLowerCase().includes(query))
   );
 });
 
@@ -873,13 +937,13 @@ const modalTitle = computed(() => {
 
 const formArtist = computed({
   get() {
-    if (uploadType.value === "song") return newSong.value.artist;
+    if (uploadType.value === "song") return newSong.value.artistName;
     if (uploadType.value === "album") return newAlbum.value.artist;
     return "";
   },
   set(value) {
     if (uploadType.value === "song") {
-      newSong.value.artist = value;
+      newSong.value.artistName = value;
     } else if (uploadType.value === "album") {
       newAlbum.value.artist = value;
     }
@@ -931,55 +995,89 @@ const handleAudioUpload = (event) => {
   }
 };
 
-const uploadContent = () => {
-  if (uploadType.value === "song") {
-    if (editingItem.value) {
-      const index = songs.value.findIndex((s) => s.id === editingItem.value.id);
-      if (index !== -1)
-        songs.value[index] = { ...songs.value[index], ...newSong.value };
-    } else {
-      songs.value.push({
-        id: Date.now(),
-        ...newSong.value,
-        duration: 180,
-        status: "draft",
-      });
+const uploadContent = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    if (uploadType.value === "song") {
+      // Validate required fields
+      if (!newSong.value.title || !newSong.value.artistName || !newSong.value.audioUrl) {
+        error.value = "Title, artist name, and audio file are required";
+        return;
+      }
+
+      if (editingItem.value) {
+        // Update existing song
+        const response = await updateSong(editingItem.value.id, newSong.value);
+        if (response.success) {
+          // Update local state
+          const index = songs.value.findIndex((s) => s.id === editingItem.value.id);
+          if (index !== -1) {
+            songs.value[index] = response.song;
+          }
+        }
+      } else {
+        // Create new song
+        const response = await createSong(newSong.value);
+        if (response.success) {
+          // Add to local state
+          songs.value.unshift(response.song);
+        }
+      }
+    } else if (uploadType.value === "album") {
+      // Handle album creation/update (mock for now)
+      if (editingItem.value) {
+        const index = albums.value.findIndex(
+          (a) => a.id === editingItem.value.id
+        );
+        if (index !== -1)
+          albums.value[index] = { ...albums.value[index], ...newAlbum.value };
+      } else {
+        albums.value.push({
+          id: Date.now(),
+          ...newAlbum.value,
+          songCount: 0,
+          releaseDate: new Date().toISOString().split("T")[0],
+        });
+      }
+    } else if (uploadType.value === "playlist") {
+      // Handle playlist creation/update (mock for now)
+      if (editingItem.value) {
+        const index = playlists.value.findIndex(
+          (p) => p.id === editingItem.value.id
+        );
+        if (index !== -1)
+          playlists.value[index] = {
+            ...playlists.value[index],
+            ...newPlaylist.value,
+          };
+      }
     }
-  } else if (uploadType.value === "album") {
-    if (editingItem.value) {
-      const index = albums.value.findIndex(
-        (a) => a.id === editingItem.value.id
-      );
-      if (index !== -1)
-        albums.value[index] = { ...albums.value[index], ...newAlbum.value };
-    } else {
-      albums.value.push({
-        id: Date.now(),
-        ...newAlbum.value,
-        songCount: 0,
-        releaseDate: new Date().toISOString().split("T")[0],
-      });
-    }
-  } else if (uploadType.value === "playlist") {
-    if (editingItem.value) {
-      const index = playlists.value.findIndex(
-        (p) => p.id === editingItem.value.id
-      );
-      if (index !== -1)
-        playlists.value[index] = {
-          ...playlists.value[index],
-          ...newPlaylist.value,
-        };
-    }
+    
+    showUploadModal.value = false;
+    resetForms();
+  } catch (err) {
+    console.error('Error uploading content:', err);
+    error.value = 'Failed to upload content. Please try again.';
+  } finally {
+    loading.value = false;
   }
-  showUploadModal.value = false;
 };
 
 const editItem = (item) => {
   editingItem.value = { ...item }; // Use a copy to avoid reactive changes before saving
   if ("duration" in item) {
     uploadType.value = "song";
-    newSong.value = { ...item };
+    newSong.value = {
+      title: item.title,
+      artistName: item.artist?.name || "",
+      albumName: item.album?.title || "",
+      genre: item.genre || "",
+      duration: item.duration || 180,
+      cover: item.cover || null,
+      audioUrl: item.audioUrl || null,
+    };
   } else if ("releaseDate" in item) {
     uploadType.value = "album";
     newAlbum.value = { ...item };
@@ -1000,17 +1098,38 @@ const confirmDelete = (item) => {
   showDeleteModal.value = true;
 };
 
-const deleteItem = () => {
-  const { type, id } = itemToDelete.value;
-  if (type === "song") {
-    songs.value = songs.value.filter((s) => s.id !== id);
-  } else if (type === "album") {
-    albums.value = albums.value.filter((a) => a.id !== id);
-  } else if (type === "playlist") {
-    playlists.value = playlists.value.filter((p) => p.id !== id);
+const deleteItem = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    
+    const { id, type } = itemToDelete.value;
+    
+    if (type === "song") {
+      await deleteSong(id);
+      // Remove from local state
+      songs.value = songs.value.filter((s) => s.id !== id);
+    } else if (type === "album") {
+      // Handle album deletion (mock for now)
+      albums.value = albums.value.filter((a) => a.id !== id);
+    } else if (type === "playlist") {
+      // Handle playlist deletion (mock for now)
+      playlists.value = playlists.value.filter((p) => p.id !== id);
+    }
+    
+    showDeleteModal.value = false;
+  } catch (err) {
+    console.error('Error deleting item:', err);
+    error.value = 'Failed to delete item. Please try again.';
+  } finally {
+    loading.value = false;
   }
-  showDeleteModal.value = false;
 };
+
+// Initialize data on mount
+onMounted(() => {
+  fetchSongs();
+});
 
 // Initialize forms on component creation
 resetForms();
