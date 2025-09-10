@@ -9,6 +9,9 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "nuxt-auth-utils",
   ],
+  prisma: {
+    autoMigrate: true
+  },
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   devServer: {
