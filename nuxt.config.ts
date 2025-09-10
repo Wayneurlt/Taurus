@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
   ],
   prisma: {
-    autoMigrate: true
+    autoMigrate: process.env.NODE_ENV === 'development'
   },
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
