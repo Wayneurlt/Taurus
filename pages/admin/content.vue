@@ -497,7 +497,7 @@
           class="flex min-h-screen items-center justify-center px-4 py-4 text-center sm:block sm:p-0"
         >
           <div
-            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle"
+            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-5xl sm:align-middle"
           >
             <div class="bg-white px-6 pt-6 pb-4 sm:p-8 sm:pb-6">
               <div class="w-full">
@@ -604,6 +604,14 @@
                           />
                         </div>
                         <p class="mt-1 text-xs text-gray-500">Supported formats: MP3, WAV, M4A</p>
+                        <!-- Audio Preview -->
+                        <div v-if="newSong.audioUrl" class="mt-2 p-3 bg-gray-50 rounded-lg">
+                          <p class="text-sm text-gray-600 mb-2">Audio Preview:</p>
+                          <audio controls class="w-full">
+                            <source :src="newSong.audioUrl" type="audio/wav">
+                            Your browser does not support the audio element.
+                          </audio>
+                        </div>
                       </div>
                       <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2"
@@ -618,6 +626,11 @@
                           />
                         </div>
                         <p class="mt-1 text-xs text-gray-500">Recommended: 400x400px, JPG/PNG</p>
+                        <!-- Image Preview -->
+                        <div v-if="newSong.cover" class="mt-2">
+                          <p class="text-sm text-gray-600 mb-2">Image Preview:</p>
+                          <img :src="newSong.cover" alt="Cover preview" class="w-20 h-20 object-cover rounded-lg border">
+                        </div>
                       </div>
                     </div>
                     <!-- Album Form -->
@@ -735,10 +748,10 @@
       <!-- Delete Confirmation Modal -->
       <div v-if="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div
-          class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+          class="flex min-h-screen items-center justify-center px-4 py-4 text-center sm:block sm:p-0"
         >
           <div
-            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+            class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:align-middle"
           >
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
@@ -779,19 +792,25 @@
               </div>
             </div>
             <div
-              class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+              class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse sm:px-8"
             >
               <button
                 @click="deleteItem"
                 type="button"
-                class="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                :disabled="loading"
+                class="inline-flex w-full justify-center items-center rounded-lg border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
               >
-                Delete
+                <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {{ loading ? 'Deleting...' : 'Delete' }}
               </button>
               <button
                 @click="showDeleteModal = false"
                 type="button"
-                class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                :disabled="loading"
+                class="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
               >
                 Cancel
               </button>
@@ -804,7 +823,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 // Content data
 const songs = ref([]);
@@ -895,6 +914,7 @@ const resetForms = () => {
     duration: 180,
     cover: null,
     audioUrl: null,
+    audioFile: null, // Store the actual file object
     status: "published", // Default to published
   };
   newAlbum.value = { title: "", artist: "", genre: "", cover: null };
@@ -1001,14 +1021,32 @@ const handleCoverUpload = (event) => {
 const handleAudioUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    // For demo purposes, we'll use a placeholder audio URL
-    // In a real app, you would upload this file to cloud storage (AWS S3, Cloudinary, etc.)
-    // and get a permanent URL back
-    newSong.value.audioUrl = "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav";
+    // Validate file type
+    const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/m4a', 'audio/ogg'];
+    if (!allowedTypes.includes(file.type)) {
+      error.value = 'Please select a valid audio file (MP3, WAV, M4A, OGG)';
+      return;
+    }
     
-    // Show a notification about file upload
-    console.log(`File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
-    console.log("Note: In a real application, this file would be uploaded to cloud storage.");
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+      error.value = 'File size must be less than 50MB';
+      return;
+    }
+    
+    // Create a blob URL for the uploaded file
+    const blobUrl = URL.createObjectURL(file);
+    newSong.value.audioUrl = blobUrl;
+    newSong.value.audioFile = file; // Store the file object for later use
+    
+    // Show success message
+    console.log(`✅ File uploaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+    console.log(`📁 File type: ${file.type}`);
+    console.log(`🔗 Blob URL created: ${blobUrl}`);
+    
+    // Clear any previous errors
+    error.value = null;
   }
 };
 
@@ -1019,14 +1057,52 @@ const uploadContent = async () => {
 
     if (uploadType.value === "song") {
       // Validate required fields
-      if (!newSong.value.title || !newSong.value.artistName || !newSong.value.audioUrl) {
-        error.value = "Title, artist name, and audio file are required";
+      if (!newSong.value.title?.trim()) {
+        error.value = "Song title is required";
+        return;
+      }
+      if (!newSong.value.artistName?.trim()) {
+        error.value = "Artist name is required";
+        return;
+      }
+      if (!newSong.value.audioUrl) {
+        error.value = "Audio file is required";
+        return;
+      }
+      if (!newSong.value.duration || newSong.value.duration < 1) {
+        error.value = "Duration must be at least 1 second";
         return;
       }
 
+      // Upload audio file if it's a new file
+      let audioUrl = newSong.value.audioUrl;
+      if (newSong.value.audioFile) {
+        console.log('Uploading audio file...');
+        const formData = new FormData();
+        formData.append('file', newSong.value.audioFile);
+        
+        const uploadResponse = await $fetch('/api/upload/audio', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (uploadResponse.success) {
+          audioUrl = uploadResponse.url;
+          console.log('✅ Audio uploaded successfully:', uploadResponse.url);
+        } else {
+          throw new Error('Failed to upload audio file');
+        }
+      }
+
+      // Prepare song data with the uploaded audio URL
+      const songData = {
+        ...newSong.value,
+        audioUrl: audioUrl
+      };
+
       if (editingItem.value) {
         // Update existing song
-        const response = await updateSong(editingItem.value.id, newSong.value);
+        const response = await updateSong(editingItem.value.id, songData);
         if (response.success) {
           // Update local state
           const index = songs.value.findIndex((s) => s.id === editingItem.value.id);
@@ -1036,7 +1112,7 @@ const uploadContent = async () => {
         }
       } else {
         // Create new song
-        const response = await createSong(newSong.value);
+        const response = await createSong(songData);
         if (response.success) {
           // Add to local state
           songs.value.unshift(response.song);
@@ -1094,6 +1170,7 @@ const editItem = (item) => {
       duration: item.duration || 180,
       cover: item.cover || null,
       audioUrl: item.audioUrl || null,
+      audioFile: null, // Will be set when user uploads a new file
       status: item.status || "published",
     };
   } else if ("releaseDate" in item) {
@@ -1144,9 +1221,27 @@ const deleteItem = async () => {
   }
 };
 
+// Add keyboard support for modals
+const handleKeydown = (event) => {
+  if (event.key === 'Escape') {
+    if (showUploadModal.value) {
+      showUploadModal.value = false;
+    }
+    if (showDeleteModal.value) {
+      showDeleteModal.value = false;
+    }
+  }
+};
+
 // Initialize data on mount
 onMounted(() => {
   fetchSongs();
+  document.addEventListener('keydown', handleKeydown);
+});
+
+// Clean up event listener
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown);
 });
 
 // Initialize forms on component creation

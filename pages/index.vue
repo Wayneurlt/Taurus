@@ -960,14 +960,61 @@ const playSong = (song) => {
   } else {
     currentSong.value = song;
     if (audioElement.value) {
-      audioElement.value.src = song.audioUrl;
-      audioElement.value.play().then(() => {
-        console.log('Audio started playing successfully');
-        isPlaying.value = true;
-      }).catch((error) => {
-        console.error('Error playing audio:', error);
+      // Stop current audio if playing
+      audioElement.value.pause();
+      audioElement.value.currentTime = 0;
+      
+      // Ensure we have a valid audio URL
+      let audioUrl = song.audioUrl;
+      if (!audioUrl) {
+        console.error('No audio URL provided for song:', song.title);
+        return;
+      }
+      
+      // Convert relative URLs to absolute URLs if needed
+      if (audioUrl.startsWith('/uploads/')) {
+        audioUrl = `http://localhost:3001${audioUrl}`;
+        console.log('Converted relative URL to absolute:', audioUrl);
+      }
+      
+      // Set new audio source
+      audioElement.value.src = audioUrl;
+      audioElement.value.load(); // Force reload of the audio element
+      
+      // Add error event listener for better debugging
+      audioElement.value.onerror = (e) => {
+        console.error('Audio element error:', e);
+        console.error('Failed to load audio from:', audioUrl);
         isPlaying.value = false;
-      });
+      };
+      
+      audioElement.value.oncanplay = () => {
+        console.log('Audio can play, duration:', audioElement.value.duration);
+      };
+      
+      // Try to play with better error handling
+      const playPromise = audioElement.value.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('✅ Audio started playing successfully');
+          console.log('Duration:', audioElement.value.duration);
+          isPlaying.value = true;
+        }).catch((error) => {
+          console.error('❌ Error playing audio:', error);
+          console.log('Audio URL that failed:', audioUrl);
+          isPlaying.value = false;
+          
+          // Show user-friendly error message
+          if (error.name === 'NotAllowedError') {
+            console.log('⚠️ User needs to interact with the page first');
+          } else if (error.name === 'NotSupportedError') {
+            console.log('⚠️ Audio format not supported');
+          } else {
+            console.log('⚠️ Unknown audio error:', error.message);
+          }
+        });
+      }
     } else {
       console.error('Audio element not initialized');
     }
