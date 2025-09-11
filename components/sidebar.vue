@@ -23,7 +23,7 @@
   <!-- Sidebar Navigation -->
   <div
     :class="[
-      'fixed inset-y-0 z-40 flex w-64 flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out',
+      'fixed inset-y-0 z-40 hidden lg:flex w-64 flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out',
       isSidebarOpen ? 'left-0' : '-left-64 lg:left-0',
     ]"
   >

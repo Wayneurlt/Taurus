@@ -3,8 +3,11 @@
     <!-- Sidebar Navigation -->
     <Sidebar />
 
+    <!-- Bottom Navigation (Mobile Only) -->
+    <BottomNavigation />
+
     <!-- Main Content -->
-    <div class="pl-64">
+    <div class="pl-0 lg:pl-64 pb-16 lg:pb-0">
       <!-- Top Navigation -->
       <div
         class="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white"
@@ -68,15 +71,15 @@
       </div>
 
       <!-- Page Content -->
-      <main class="py-6">
+      <main class="py-4 sm:py-6">
         <div class="px-4 sm:px-6 lg:px-8">
           <!-- Dashboard Overview -->
-          <div class="space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+          <div class="space-y-4 sm:space-y-6">
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Dashboard Overview</h1>
 
             <!-- Stats -->
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <div class="rounded-lg bg-white p-6 shadow">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mobile-card">
+              <div class="rounded-lg bg-white p-4 sm:p-6 shadow">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 rounded-md bg-green-100 p-3">
                     <svg
@@ -282,7 +285,7 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="rounded-lg bg-white p-6 shadow">
+            <div class="rounded-lg bg-white p-4 sm:p-6 shadow">
               <h2 class="text-lg font-medium text-gray-900">Recent Activity</h2>
               <div class="mt-4 flow-root">
                 <ul class="-mb-8">

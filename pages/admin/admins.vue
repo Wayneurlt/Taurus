@@ -2,7 +2,11 @@
   <div class="min-h-screen bg-gray-100">
     <!-- Sidebar Navigation -->
     <Sidebar />
-    <div class="pl-64">
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <BottomNavigation />
+
+    <div class="pl-0 lg:pl-64 pb-16 lg:pb-0">
       <!-- Top Navigation -->
       <div
         class="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white"
@@ -44,10 +48,10 @@
       </div>
 
       <!-- Main Content -->
-      <main class="py-6">
+      <main class="py-4 sm:py-6">
         <div class="px-4 sm:px-6 lg:px-8">
-          <div class="mb-6 flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-900">Admin Management</h1>
+          <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Admin Management</h1>
             <button
               @click="openInviteModal"
               type="button"
@@ -72,8 +76,8 @@
           </div>
 
           <!-- Tabs -->
-          <div class="mb-6 border-b border-gray-200">
-            <nav class="-mb-px flex space-x-8">
+          <div class="mb-4 sm:mb-6 border-b border-gray-200">
+            <nav class="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
               <button
                 v-for="tab in tabs"
                 :key="tab.name"
@@ -82,7 +86,7 @@
                   activeTab === tab.name
                     ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                  'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
+                  'whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 text-sm font-medium flex-shrink-0',
                 ]"
               >
                 {{ tab.label }}

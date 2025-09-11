@@ -2,7 +2,11 @@
   <div class="min-h-screen bg-gray-100">
     <!-- Sidebar Navigation -->
     <Sidebar />
-    <div class="pl-64">
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <BottomNavigation />
+
+    <div class="pl-0 lg:pl-64 pb-16 lg:pb-0">
       <!-- Top Navigation -->
       <div
         class="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white"
@@ -43,15 +47,15 @@
       </div>
 
       <!-- Main Content -->
-      <main class="py-6">
+      <main class="py-4 sm:py-6">
         <div class="px-4 sm:px-6 lg:px-8">
-          <h1 class="text-2xl font-bold text-gray-900 mb-6">
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
             Analytics Dashboard
           </h1>
 
           <!-- Date Range Selector -->
           <div
-            class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+            class="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
           >
             <div class="mb-4 sm:mb-0">
               <h2 class="text-lg font-medium text-gray-900">
@@ -61,7 +65,7 @@
                 Track your streaming metrics and user engagement
               </p>
             </div>
-            <div class="flex items-center space-x-2">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
               <select
                 v-model="timeRange"
                 class="rounded-md border-gray-300 py-2 pl-3 pr-8 text-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
@@ -84,9 +88,9 @@
 
           <!-- Stats Cards -->
           <div
-            class="grid grid-cols-1 gap-6 mb-6 sm:grid-cols-2 lg:grid-cols-4"
+            class="grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6 sm:grid-cols-2 lg:grid-cols-4"
           >
-            <div class="rounded-lg bg-white p-6 shadow">
+            <div class="rounded-lg bg-white p-4 sm:p-6 shadow">
               <div class="flex items-center">
                 <div class="flex-shrink-0 rounded-md bg-green-100 p-3">
                   <svg

@@ -1,11 +1,11 @@
 <template>
   <!-- Added transition-colors for smooth theme switching -->
   <div
-    class="bg-gray-100 text-black dark:bg-gray-900 dark:text-white min-h-screen pb-20 sm:pb-24 transition-colors duration-300"
+    class="bg-gray-50 text-black dark:bg-gray-900 dark:text-white min-h-screen pb-20 sm:pb-24 transition-colors duration-300"
   >
     <!-- Navbar -->
     <nav
-      class="bg-white text-black dark:bg-gray-800 dark:text-white p-3 sm:p-4 sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300"
+      class="bg-white text-black dark:bg-gray-800 dark:text-white p-3 sm:p-4 sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300 shadow-sm"
     >
       <!-- Mobile Layout -->
       <div class="block sm:hidden">
@@ -61,13 +61,13 @@
           <input
             type="text"
             placeholder="Search songs, artists..."
-            class="w-full bg-gray-200 dark:bg-gray-700 rounded-full py-2.5 px-4 pr-10 text-sm text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-300"
+            class="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full py-2.5 px-4 pr-10 text-sm text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300"
             v-model="searchQuery"
             @input="handleSearch"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 absolute right-3 top-3 text-gray-500 dark:text-gray-400"
+            class="h-4 w-4 absolute right-3 top-3 text-gray-400 dark:text-gray-500 group-focus-within:text-green-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -97,13 +97,13 @@
                     <input
             type="text"
             placeholder="Search for songs, artists, or albums..."
-            class="w-full bg-gray-200 dark:bg-gray-700 rounded-full py-2 px-4 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-300"
+            class="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full py-2 px-4 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300"
             v-model="searchQuery"
             @input="handleSearch"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 absolute right-3 top-2.5 text-gray-500 dark:text-gray-400"
+            class="h-5 w-5 absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 group-focus-within:text-green-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -165,12 +165,12 @@
     <main class="p-4 sm:p-6">
       <!-- Featured Charts -->
       <section class="mb-8" v-if="!searchQuery">
-        <h2 class="text-2xl font-bold mb-4">Featured Charts</h2>
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Featured Charts</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <div
             v-for="playlist in featuredPlaylists"
             :key="playlist.id"
-            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer"
+            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-green-200"
             @click="viewPlaylist(playlist)"
           >
             <img
@@ -191,7 +191,7 @@
 
       <!-- Trending Now -->
       <section class="mb-8" v-if="!searchQuery">
-        <h2 class="text-2xl font-bold mb-4">Trending Now</h2>
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Trending Now</h2>
         
         <!-- Loading State -->
         <div v-if="loading" class="text-center py-8">
@@ -212,7 +212,7 @@
           <div
             v-for="song in trendingSongs"
             :key="song.id"
-            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer flex items-center space-x-4"
+            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer flex items-center space-x-4 border border-gray-200 dark:border-gray-700 hover:border-green-200"
             @click="playSong(song)"
           >
             <img
@@ -230,7 +230,7 @@
               </p>
             </div>
             <button
-              class="text-gray-500 dark:text-gray-400 hover:text-green-500 transition-colors duration-200"
+              class="text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
               @click.stop="toggleLike(song)"
             >
               <svg
@@ -260,12 +260,12 @@
       <!-- Popular Artists -->
        
       <section class="mb-8" v-if="!searchQuery">
-        <h2 class="text-2xl font-bold mb-4">Popular Artists</h2>
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Popular Artists</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <div
             v-for="artist in popularArtists"
             :key="artist.id"
-            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer text-center"
+            class="bg-white dark:bg-gray-800 p-4 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer text-center border border-gray-200 dark:border-gray-700 hover:border-green-200"
             @click="viewArtist(artist)"
           >
             <img
@@ -284,17 +284,17 @@
 
       <!-- Search Results -->
       <section v-if="searchQuery">
-        <h2 class="text-2xl font-bold mb-4">
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
           Search Results for "{{ searchQuery }}"
         </h2>
 
         <!-- Songs -->
-        <h3 class="text-xl font-semibold mb-3 mt-6">Songs</h3>
+        <h3 class="text-xl font-semibold mb-3 mt-6 text-gray-900 dark:text-white">Songs</h3>
         <div class="space-y-2">
           <div
             v-for="song in filteredSongs"
             :key="song.id"
-            class="bg-white dark:bg-gray-800 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer flex items-center space-x-4"
+            class="bg-white dark:bg-gray-800 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer flex items-center space-x-4 border border-gray-200 dark:border-gray-700 hover:border-green-200"
             @click="playSong(song)"
           >
             <img
@@ -365,7 +365,7 @@
             </p>
           </div>
           <button
-            class="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex-shrink-0"
+            class="text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 flex-shrink-0"
             @click="toggleLike(currentSong)"
             v-if="currentSong"
           >
@@ -410,7 +410,7 @@
         <div class="flex items-center justify-center space-x-6">
           <button
             @click="shuffle"
-            class="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200"
+            class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -429,7 +429,7 @@
           </button>
           <button
             @click="prevSong"
-            class="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200"
+            class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -613,10 +613,10 @@
                 />
               </svg>
             </button>
-            <button
-              @click="togglePlay"
-              class="bg-black text-white dark:bg-white dark:text-black rounded-full w-8 h-8 flex items-center justify-center hover:scale-105 transition-all duration-200"
-            >
+          <button
+            @click="togglePlay"
+            class="bg-green-600 text-white dark:bg-green-500 dark:text-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-105 hover:bg-green-700 dark:hover:bg-green-600 transition-all duration-200"
+          >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5"
@@ -656,7 +656,7 @@
             </button>
             <button
               @click="nextSong"
-              class="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200"
+              class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -675,7 +675,7 @@
             </button>
             <button
               @click="toggleRepeat"
-              class="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200"
+              class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

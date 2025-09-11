@@ -12,3 +12,104 @@
 .animate-spin-slow {
   animation: spin-slow 10s linear infinite;
 }
+
+/* Mobile responsive improvements */
+@media (max-width: 1023px) {
+  /* Ensure content doesn't get hidden behind bottom navigation */
+  .mobile-content {
+    padding-bottom: 4rem;
+  }
+  
+  /* Improve table responsiveness */
+  .mobile-table {
+    font-size: 0.875rem;
+  }
+  
+  /* Better spacing for mobile cards */
+  .mobile-card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Improve modal responsiveness on mobile */
+  .mobile-modal {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+  
+  /* Better form spacing on mobile */
+  .mobile-form {
+    padding: 1rem;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  @media (max-width: 640px) {
+    .mobile-stack {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .mobile-stack button {
+      width: 100%;
+    }
+    
+    /* Make tables more mobile-friendly */
+    .mobile-table th,
+    .mobile-table td {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    /* Hide less important columns on very small screens */
+    .mobile-table .hidden-mobile {
+      display: none;
+    }
+  }
+}
+
+/* Safe area support for devices with home indicators */
+@supports (padding: max(0px)) {
+  .bottom-nav-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Green theme enhancements for client side */
+:root {
+  --green-primary: #10b981;
+  --green-secondary: #059669;
+  --green-light: #d1fae5;
+  --green-dark: #047857;
+}
+
+/* Enhanced green accents for light mode */
+@media (prefers-color-scheme: light) {
+  .bg-gray-50 {
+    background-color: #f9fafb;
+  }
+  
+  .hover\:bg-green-50:hover {
+    background-color: var(--green-light);
+  }
+  
+  .border-green-200 {
+    border-color: #bbf7d0;
+  }
+  
+  .hover\:border-green-200:hover {
+    border-color: #bbf7d0;
+  }
+}
+
+/* Smooth transitions for green theme elements */
+.transition-green {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Enhanced focus states with green */
+.focus\:ring-green-500:focus {
+  --tw-ring-color: var(--green-primary);
+}
+
+.focus\:border-green-500:focus {
+  border-color: var(--green-primary);
+}
